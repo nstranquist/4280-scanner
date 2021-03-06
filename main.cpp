@@ -1,5 +1,5 @@
 // #include "testScanner.h"
-#include "testScanner.cpp"
+#include "testScanner.h"
 // #include "scanner.h"
 
 #include <iostream>
@@ -9,7 +9,8 @@
 
 using namespace std;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   // Processing the arguments (as in P0) and then calling testScanner() function with interface and preparation as needed
     // Input types: `scanner [file]` to read from stdin or file.fs (extension is implicit)
 

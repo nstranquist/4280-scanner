@@ -1,9 +1,12 @@
 #include "scanner.h"
 
-#include <istream>
 #include <iostream>
+#include <istream>
+#include <fstream>
 
 using namespace std;
+
+// void testScanner(istream *input);
 
 // int argc, char *argv[]
 void testScanner(istream *input) {
@@ -12,7 +15,6 @@ void testScanner(istream *input) {
   string delimiterComma = ",";
   string delimiterSpace = " ";
   string delimiterTab = "\t";
-  string line;
 
   // Instructions:
   // ask the scanner for one token at a time,
@@ -25,29 +27,35 @@ void testScanner(istream *input) {
 
   // -------------------------------------------------------------------------------------------------------------------
 
-  // Read Input from istream
-  while (getline(*input, line)) {
-    cout << "line: " << line << endl;
-    if(line == "EOF" || line == "") {
-      cout << "end of file" << endl;
-      break;
-    }
+  Token *token;
+  string line;
 
-    // Split line into characters, check for delimiters, build tree this way
-    // if((line.find(delimiterSpace)) != string::npos) {
-    //   splitByDelimiter(delimiterSpace, line);
-    // }
-    // else if((line.find(delimiterComma)) != string::npos) {
-    //   splitByDelimiter(delimiterComma, line);
-    // }
-    // else if((line.find(delimiterTab)) != string::npos) {
-    //   splitByDelimiter(delimiterTab, line);
-    // }
-    // else {
-    //   // line is 1 word, do something with it
+  const int maxTokenSize = 8;
 
-    //   // string key = this->getCharKey(line);
-    //   // this->handleNewNode(key, line);
-    // }
+  int lineNumber = 1;
+
+  char c;
+
+  // getline(*input, line)
+  while(input->get(c)) {
+    cout << "got char: " << c << endl;
   }
+
+    // cout << "line: " << line << endl;
+    
+    // needs to separate by character
+
+
+    // while (new character in the line)
+
+    
+    // token = scanner.readString(input, lineNumber);
+    // cout << "token ID: " << token->tokenID;
+
+    // lineNumber++;
+
+    // if(line == "EOF" || line == "") {
+    //   cout << "end of file" << endl;
+    //   // break;
+    // }
 }

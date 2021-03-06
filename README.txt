@@ -8,3 +8,6 @@ I am implementing option 3, an FSA Table + Driver, and am counting line numbers
 
 1. make
 2. etc...
+
+
+// Say how you are expecting the project to be run

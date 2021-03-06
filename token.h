@@ -5,9 +5,12 @@
 
 using namespace std;
 
+// enum tokenID {_tk, _tk, etc.};
+// string tokenNames[] = {"Identifier", "Number", "Keyword", etc};
+
 struct Token {
-  string tokenID;
-  Token *tokenInstance;
+  string tokenID; // enum TokenID
+  string tokenInstance; // the actual value of the final token
   int lineNumber;
 };
 
