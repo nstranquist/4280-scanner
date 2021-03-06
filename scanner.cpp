@@ -52,6 +52,9 @@ Token* Scanner::getToken(istream *input) {
           cout << "--> ending comment block" << endl;
           this->isCommentActive = false;
         }
+        else if(nextChar != NULL && nextChar != '$') {
+          cout << "SCANNER ERROR: line " << this->lineNumber << ": '$' is not a valid character. Did you mean '$$'?" << endl;
+        }
       }
     }
     else if(c == '$') {
@@ -59,6 +62,9 @@ Token* Scanner::getToken(istream *input) {
         input->get(c);
         cout << "--> starting comment block" << endl;
         this->isCommentActive = true;
+      }
+      else if(nextChar != NULL && nextChar != '$') {
+        cout << "SCANNER ERROR: line " << this->lineNumber << ": '$' is not a valid character. Did you mean '$$'?" << endl;
       }
     }
     else if(c == ' ') {
@@ -79,6 +85,7 @@ Token* Scanner::getToken(istream *input) {
     }
 
     // Need to do additional checks
+    //  || this->isDoubleOperatorDelimiter(token->tokenInstance + c)
     else if(this->isOperatorDelimiter(c)) {
       // cout << "is operator / delimiter" << endl;
       token->tokenID = "operator_delimiter";
@@ -86,7 +93,7 @@ Token* Scanner::getToken(istream *input) {
       token->tokenInstance = token->tokenInstance + c;
 
       if(nextChar != NULL) {
-        string testWord = "" + c + nextChar;
+        string testWord = token->tokenInstance + nextChar;
         if(this->isDoubleOperatorDelimiter(testWord)) {
           cout << "--> is double op/delim" << endl;
           input->get(c);
@@ -132,10 +139,10 @@ Token* Scanner::getToken(istream *input) {
 
     else {
       // cout << "reached end of file. character is other. would throw error" << endl;
-      cout << "--> would throw error, unrecognized token: ";
+      cout << "--> SCANNER ERROR: would throw error, unrecognized token: ";
       cout << c << endl;
-      cout << (char)c << endl;
-      tokenComplete = true;
+      if(!this->isTokenEmpty(token))
+        tokenComplete = true;
     }
   }
 
