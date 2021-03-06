@@ -65,6 +65,8 @@ int main(int argc, char *argv[])
 
   testScanner(in);
 
+  out.close();
+
   cout << "program has ran" << endl;
 
   return 0;

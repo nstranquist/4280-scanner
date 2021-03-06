@@ -10,32 +10,143 @@ Scanner::Scanner() {
 
 }
 
-Token* Scanner::readString(istream *input, int lineNumber) {
-  Token *token;
-  string line;
+Token* Scanner::getToken(istream *input) {
+  Token *token = new Token();
 
-  token->lineNumber = lineNumber;
   
-  printf("reading character");
+  // cout << "line number: " << this->lineNumber << endl;
+
+  token->lineNumber = this->lineNumber;
+
+  char c;
+  char nextChar;
+
+  bool tokenComplete = false;
+
+  
 
   // Read Input from istream
-  while (getline(*input, line)) {
-    cout << "line: " << line << endl;
+  while (!tokenComplete) {
+    input->get(c);
 
-    
+    // cout << c << endl;
 
-
-    if(line == "EOF" || line == "") {
-      cout << "end of file" << endl;
-      token->tokenInstance = "";
-      token->tokenID = "EOF";
-      return token;
+    if(this->isEndOfFile) {
+      // cout << "end of file. returning null" << endl;
+      return NULL;
+    }
+    else if(input->peek() == EOF) {
+      // cout << "next char is eof" << endl;
+      tokenComplete = true;
+      this->isEndOfFile = true;
+      nextChar = NULL;
+    }
+    else {
+      nextChar = input->peek();
     }
 
+    if(this->isCommentActive) {
+      if(c == '$') {
+        if(nextChar != NULL && nextChar == '$') {
+          input->get(c);
+          cout << "--> ending comment block" << endl;
+          this->isCommentActive = false;
+        }
+      }
+    }
+    else if(c == '$') {
+      if(nextChar != NULL && nextChar == '$') {
+        input->get(c);
+        cout << "--> starting comment block" << endl;
+        this->isCommentActive = true;
+      }
+    }
+    else if(c == ' ') {
+      cout << "--> is space" << endl;
+      if(!this->isTokenEmpty(token))
+        tokenComplete = true;
+      else {
+        cout << "--> token not empty" << endl;
+        cout << token->tokenInstance << endl;
+      }
+    }
+    else if(c == '\n') {
+      this->lineNumber = this->lineNumber + 1;
+      if(this->isTokenEmpty(token))
+        token->lineNumber = this->lineNumber;
+      else
+        tokenComplete = true;
+    }
 
+    // Need to do additional checks
+    else if(this->isOperatorDelimiter(c)) {
+      // cout << "is operator / delimiter" << endl;
+      token->tokenID = "operator_delimiter";
+
+      token->tokenInstance = token->tokenInstance + c;
+
+      if(nextChar != NULL) {
+        string testWord = "" + c + nextChar;
+        if(this->isDoubleOperatorDelimiter(testWord)) {
+          cout << "--> is double op/delim" << endl;
+          input->get(c);
+          token->tokenInstance = token->tokenInstance + c;
+        }
+      }
+
+      tokenComplete = true;
+    }
+
+    else if(this->isNumeric(c)){
+      // cout << "is numeric" << endl;
+
+      token->tokenInstance = token->tokenInstance + c;
+
+      int tokenLength = token->tokenInstance.length();
+      // cout << "numeric token length: " << tokenLength << endl;
+
+      if(tokenLength <= 1)
+        token->tokenID = "numeric";
+
+      if(!this->isNumeric(nextChar)) {
+        tokenComplete = true;
+      }
+    }
+    else if(this->isAlpha(c)) {
+      // cout << "is alphanumeric" << endl;
+
+      token->tokenInstance = token->tokenInstance + c;
+      
+      int tokenLength = token->tokenInstance.length();
+      // cout << "alpha token length: " << tokenLength << endl;
+
+      if(tokenLength <= 1)
+        token->tokenID = "alpha";
+
+      if(!this->isAlpha(nextChar)) {
+        tokenComplete = true;
+      }
+    }
+
+    // TODO: Identifiers
+
+    else {
+      // cout << "reached end of file. character is other. would throw error" << endl;
+      cout << "--> would throw error, unrecognized token: ";
+      cout << c << endl;
+      cout << (char)c << endl;
+      tokenComplete = true;
+    }
   }
 
-  token->lineNumber = 1;
+  if(token->tokenID == "alpha") {
+    // check for reserved words
+    if(this->isReservedWord(token->tokenInstance)) {
+      // cout << "is reserved word. returning" << endl;
+      token->tokenID = "reserved";
+      return token;
+    }
+  }
 
   return token;
 }
@@ -45,41 +156,86 @@ void Scanner::lookupToken() {
 }
 
 // TODO: Could just return the character
-string Scanner::isOperatorDelimiter(char inputChar) {
-  string input = "" + inputChar;
+bool Scanner::isOperatorDelimiter(char inputChar) {
+  string input = "";
+  input += inputChar;
   // Reference: https://stackoverflow.com/questions/19215027/check-if-element-found-in-array-c#19215059
   
   // check if input character is included in the `operatorsDelimiters` array
   // size_t arraySize = sizeof(this->operatorsDelimiters) / sizeof(char);
   // char *end = this->operatorsDelimiters + arraySize;
-  int arrayLength = sizeof(this->operatorsDelimiters) / sizeof(this->operatorsDelimiters[0]);
+  int arrayLength = sizeof(this->singleOperatorsDelimiters) / sizeof(this->singleOperatorsDelimiters[0]);
   for(int i=0; i<arrayLength; i++) {
-    cout << "delimiter: " << this->operatorsDelimiters[i] << endl;
+    // cout << "delimiter: " << this->singleOperatorsDelimiters[i] << endl;
 
-    if(this->operatorsDelimiters[i] == input) {
-      cout << "matching character!" << endl;
-      return this->operatorsDelimiters[i];
+    if(this->singleOperatorsDelimiters[i] == input) {
+      cout << "--> matching op/delim!" << endl;
+      return true;
     }
   }
 
-  return ""; // NULL
+  return false;
 }
 
-string Scanner::isReservedWord(string input) {
-  int arrayLength = sizeof(this->keywords) / sizeof(this->keywords[0]);
-  for(int i=0; i<arrayLength; i++) {
-    cout << "keyword: " << this->keywords[i] << endl;
+bool Scanner::isDoubleOperatorDelimiter(string input) {
+  int arrayLength = sizeof(this->doubleOperatorsDelimiters) / sizeof(this->doubleOperatorsDelimiters[0]);
 
-    if(this->keywords[i] == input) {
-      cout << "matching reserved word!" << endl;
-      return this->keywords[i];
+  for(int i=0; i<arrayLength; i++) {
+    if(this->doubleOperatorsDelimiters[i] == input) {
+      cout << "--> matching double op/delim" << endl;
+      return true;
     }
   }
 
-  return ""; // NULL
+  return false;
+}
+
+bool Scanner::isReservedWord(string input) {
+  int arrayLength = sizeof(this->keywords) / sizeof(this->keywords[0]);
+  for(int i=0; i<arrayLength; i++) {
+    // cout << "keyword: " << this->keywords[i] << endl;
+
+    if(this->keywords[i] == input) {
+      cout << "--> matching reserved word!" << endl;
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool Scanner::isNumeric(char inputChar) {
+  if(isdigit(inputChar))
+    return true;
+  return false;
+}
+
+bool Scanner::isAlpha(char inputChar) {
+  if((inputChar >= 'A' && inputChar <= 'Z') || (inputChar >= 'a' && inputChar <= 'z')) {
+    return true;
+  }
+  else if (inputChar == '_') {
+    cout << "is underscore, counting as alphanumeric" << endl;
+    return true;
+  }
+  return false;
+}
+
+bool Scanner::isComment(char inputChar) {
+  if(inputChar == '$$') {
+    cout << "is a comment character" << endl;
+    return true;
+  }
+  return false;
 }
 
 bool Scanner::isEmptyString(string input) {
   if(input.length() == 0) return true;
+  return false;
+}
+
+bool Scanner::isTokenEmpty(Token *token) {
+  if(token->tokenInstance.length() == 0)
+    return true;
   return false;
 }

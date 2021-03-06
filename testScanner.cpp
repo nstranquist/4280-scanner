@@ -28,21 +28,15 @@ void testScanner(istream *input) {
   // -------------------------------------------------------------------------------------------------------------------
 
   Token *token;
-  string line;
 
-  const int maxTokenSize = 8;
-
-  int lineNumber = 1;
-
-  char c;
-
-  // getline(*input, line)
-  while(input->get(c)) {
-    cout << "got char: " << c << endl;
+  while(token = scanner.getToken(input)) {
+    // cout << "\ntoken:" << endl;
+    if(token)
+      cout << "\nline " << token->lineNumber << ": " << token->tokenInstance << "\tid: " << token->tokenID << "\n" << endl;
+    // cout << "instance: " << token->tokenInstance << endl;
+    // cout << "id: " << token->tokenID << endl;
   }
 
-    // cout << "line: " << line << endl;
-    
     // needs to separate by character
 
 

@@ -11,19 +11,27 @@ class Scanner {
   public:
     Scanner();
 
-    Token* readString(istream *input, int lineNumber);
+    Token* getToken(istream *input);
 
   private:
+    int lineNumber = 1;
+    bool isCommentActive = false;
+    bool isEndOfFile = false;
     string keywords[14] = {"begin", "end", "loop", "while", "void", "exit", "getter", "outter", "main", "if", "then", "assign", "data", "proc"};
     // char operatorsDelimiters[20] = {'=', '=>', '=<', '==', ':', ':=', '+', '-', '*', '/', '%', '.', '(', ')', ',', '{', '}', ';', '[', ']'};
-    string operatorsDelimiters[20] = {"=", "=>", "=<", "==", ":", ":=", "+", "-", "*", "/", "%", ".", "(", ")", ",", "{", "}", ";", "[", "]"};
+    string singleOperatorsDelimiters[17] = {"=", ":", ":=", "+", "-", "*", "/", "%", ".", "(", ")", ",", "{", "}", ";", "[", "]"};
+    string doubleOperatorsDelimiters[4] = {"=>", "=<", "==", ":="};
     string comment = "$$";
 
     Token token;
     void lookupToken();
-    string isOperatorDelimiter(char inputChar);
-    string isReservedWord(string input);
-
+    bool isOperatorDelimiter(char inputChar);
+    bool isDoubleOperatorDelimiter(string input);
+    bool isNumeric(char inputChar);
+    bool isComment(char inputChar);
+    bool isAlpha(char inputChar);
+    bool isReservedWord(string input);
+    bool isTokenEmpty(Token *token);
     bool isEmptyString(string input);
 };
 
