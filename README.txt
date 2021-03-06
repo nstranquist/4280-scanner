@@ -2,7 +2,7 @@
 
 ### Option Selected:
 
-I am implementing option 3, an FSA Table + Driver.
+I am implementing option 3, an FSA Table + Driver, and am counting line numbers
 
 ### Instructions to Run:
 
