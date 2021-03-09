@@ -1,4 +1,6 @@
 #include "scanner.h"
+// #include "table.h"
+#include "token.h"
 
 #include <iostream>
 #include <istream>
@@ -16,6 +18,10 @@ void testScanner(istream *input) {
   string delimiterSpace = " ";
   string delimiterTab = "\t";
 
+  // scanner.testTable();
+
+  // return;
+
   // Instructions:
   // ask the scanner for one token at a time,
   // and display the token to the screen, one per line,
@@ -32,7 +38,7 @@ void testScanner(istream *input) {
   while(token = scanner.getToken(input)) {
     // cout << "\ntoken:" << endl;
     if(token)
-      cout << "\nline " << token->lineNumber << ": " << token->tokenInstance << "\tid: " << token->tokenID << "\n" << endl;
+      cout << "\nline " << token->lineNumber << ": " << token->tokenInstance << "\tid: " << token->tokenID << " " << scanner.tokenNames[token->tokenID] << "\n" << endl;
     // cout << "instance: " << token->tokenInstance << endl;
     // cout << "id: " << token->tokenID << endl;
   }

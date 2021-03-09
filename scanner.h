@@ -13,12 +13,15 @@ class Scanner {
 
     Token* getToken(istream *input);
 
+    void testTable();
+
+    string tokenNames[4] = { "Identifier", "Numeric", "Keyword", "Operator_Delimiter" }; // to match up with the enum values
+
   private:
     int lineNumber = 1;
     bool isCommentActive = false;
     bool isEndOfFile = false;
     string keywords[14] = {"begin", "end", "loop", "while", "void", "exit", "getter", "outter", "main", "if", "then", "assign", "data", "proc"};
-    // char operatorsDelimiters[20] = {'=', '=>', '=<', '==', ':', ':=', '+', '-', '*', '/', '%', '.', '(', ')', ',', '{', '}', ';', '[', ']'};
     string singleOperatorsDelimiters[17] = {"=", ":", ":=", "+", "-", "*", "/", "%", ".", "(", ")", ",", "{", "}", ";", "[", "]"};
     string doubleOperatorsDelimiters[4] = {"=>", "=<", "==", ":="};
     string comment = "$$";
